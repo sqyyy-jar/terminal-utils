@@ -1,36 +1,35 @@
 extern crate crossterm;
 
-use crossterm::{cursor::*, event::*, execute, style::*, terminal::size};
+use crossterm::{cursor::*, event::*, execute, style::*, terminal::{size, enable_raw_mode, disable_raw_mode}};
 use std::io::stdout;
 use std::process::exit;
-use crossterm::terminal::{enable_raw_mode, disable_raw_mode};
 
 const DEBUG: bool = true;
 
 /// clears the given amount of lines and move to the line started with
 #[allow(unused)]
 fn clear(length: &u16) -> bool {
-    let result = size();
-    if result.is_err() {
+    let result_size = size();
+    if result_size.is_err() {
         if DEBUG {
-            println!("line 12");
+            println!("{}", result_size.unwarp_err());
         }
         return false;
     }
-    let result = result.unwrap();
+    let size = result_size.unwrap();
     for _ in 0..*length {
-        let result0 = execute!(stdout(), Print(format!("{}{}", " ".repeat(result.0 as usize), "\n\r")));
-        if result0.is_err() {
+        let result_cl0 = execute!(stdout(), Print(format!("{}{}", " ".repeat(size.0 as usize), "\n\r")));
+        if result_cl0.is_err() {
             if DEBUG {
-                println!("{}", result0.unwrap_err());
+                println!("{}", result_cl0.unwrap_err());
             }
             return false;
         }
     }
-    let result0 = execute!(stdout(), MoveToPreviousLine(*length), MoveToColumn(1));
-    if result0.is_err() {
+    let result_cl1 = execute!(stdout(), MoveToPreviousLine(*length));
+    if result_cl1.is_err() {
         if DEBUG {
-            println!("{}", result0.unwrap_err());
+            println!("{}", result_cl1.unwrap_err());
         }
         return false;
     }
@@ -48,17 +47,17 @@ fn choose(options: &[String]) -> Option<u8> {
         }
         return None;
     }
-    let result1 = execute!(stdout(), Hide);
-    if result1.is_err() {
+    let result_ch0 = execute!(stdout(), Hide);
+    if result_ch0.is_err() {
         if DEBUG {
-            println!("{}", result1.unwrap_err());
+            println!("{}", result_ch0.unwrap_err());
         }
         return None;
     }
-    let result3 = enable_raw_mode();
-    if result3.is_err() {
+    let result_ch1 = enable_raw_mode();
+    if result_ch1.is_err() {
         if DEBUG {
-            println!("{}", result3.unwrap_err());
+            println!("{}", result_ch1.unwrap_err());
         }
         return None;
     }
@@ -67,24 +66,24 @@ fn choose(options: &[String]) -> Option<u8> {
         let mut i = 0;
         for option in options {
             if *selected == i {
-                let result = execute!(
+                let result_pr0 = execute!(
                     stdout(),
                     PrintStyledContent(format!("> {}\n\r", option).blue())
                 );
-                if result.is_err() {
+                if result_pr0.is_err() {
                     if DEBUG {
-                        println!("{}", result.unwrap_err());
+                        println!("{}", result_pr0.unwrap_err());
                     }
                     return false;
                 }
             } else {
-                let result = execute!(
+                let result_pr1 = execute!(
                     stdout(),
                     PrintStyledContent(format!("  {}\n\r", option).blue())
                 );
-                if result.is_err() {
+                if result_pr1.is_err() {
                     if DEBUG {
-                        println!("{}", result.unwrap_err());
+                        println!("{}", result_pr1.unwrap_err());
                     }
                     return false;
                 }
@@ -95,15 +94,15 @@ fn choose(options: &[String]) -> Option<u8> {
     }
     prt(options, &mut selected);
     loop {
-        let result = read();
-        if result.is_err() {
+        let result_ch2 = read();
+        if result_ch2.is_err() {
             if DEBUG {
-                println!("{}", result.unwrap_err());
+                println!("{}", result_ch2.unwrap_err());
             }
             return None;
         }
-        let result = result.unwrap();
-        match result {
+        let key = result_ch2.unwrap();
+        match key {
             Event::Key(it) => {
                 if it.code == KeyCode::Up {
                     if selected > 0 {
@@ -112,7 +111,7 @@ fn choose(options: &[String]) -> Option<u8> {
                             || !clear(&(options.len() as u16))
                             || !prt(options, &mut selected) {
                             if DEBUG {
-                                println!("line 105");
+                                println!("err/choose/match-key-1");
                             }
                             return None;
                         }
@@ -124,7 +123,7 @@ fn choose(options: &[String]) -> Option<u8> {
                             || !clear(&(options.len() as u16))
                             || !prt(options, &mut selected) {
                             if DEBUG {
-                                println!("line 117");
+                                println!("err/choose/match-key-2");
                             }
                             return None;
                         }
@@ -133,21 +132,21 @@ fn choose(options: &[String]) -> Option<u8> {
                     if execute!(stdout(), MoveToPreviousLine(options.len() as u16), MoveToColumn(1)).is_err()
                         || !clear(&(options.len() as u16)) {
                         if DEBUG {
-                            println!("line 127");
+                            println!("err/choose/match-key-3");
                         }
                         return None;
                     }
-                    let result2 = execute!(stdout(), Show);
-                    if result2.is_err() {
+                    let result_ch3 = execute!(stdout(), Show);
+                    if result_ch3.is_err() {
                         if DEBUG {
-                            println!("{}", result2.unwrap_err());
+                            println!("{}", result_ch3.unwrap_err());
                         }
                         return None;
                     }
-                    let result3 = disable_raw_mode();
-                    if result3.is_err() {
+                    let result_ch4 = disable_raw_mode();
+                    if result_ch4.is_err() {
                         if DEBUG {
-                            println!("{}", result3.unwrap_err());
+                            println!("{}", result_ch4.unwrap_err());
                         }
                         return None;
                     }
@@ -160,6 +159,7 @@ fn choose(options: &[String]) -> Option<u8> {
 }
 
 fn main() {
+    // testing
     println!("Choose some:");
     let result = choose(&["a".to_string(), "b".to_string(), "c".to_string()]);
     if result.is_none() {
