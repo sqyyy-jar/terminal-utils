@@ -1,5 +1,5 @@
 [package]
-name = "comic-cli"
+name = "terminal-utils"
 version = "0.1.0"
 edition = "2018"
 
