@@ -9,7 +9,7 @@ use crossterm::{
 };
 use std::io::stdout;
 
-const DEBUG: bool = true;
+const DEBUG: bool = false;
 
 /// clears the given amount of lines and move to the line started with
 #[allow(unused)]
