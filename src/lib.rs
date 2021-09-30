@@ -1,6 +1,12 @@
 extern crate crossterm;
 
-use crossterm::{cursor::*, event::*, execute, style::*, terminal::{size, enable_raw_mode, disable_raw_mode}};
+use crossterm::{
+    cursor::*,
+    event::*,
+    execute,
+    style::*,
+    terminal::{disable_raw_mode, enable_raw_mode, size},
+};
 use std::io::stdout;
 
 const DEBUG: bool = true;
@@ -17,7 +23,10 @@ pub fn clear(length: &u16) -> bool {
     }
     let size = result_size.unwrap();
     for _ in 0..*length {
-        let result_cl0 = execute!(stdout(), Print(format!("{}{}", " ".repeat(size.0 as usize), "\n\r")));
+        let result_cl0 = execute!(
+            stdout(),
+            Print(format!("{}{}", " ".repeat(size.0 as usize), "\n\r"))
+        );
         if result_cl0.is_err() {
             if DEBUG {
                 println!("{}", result_cl0.unwrap_err());
@@ -42,7 +51,10 @@ pub fn clear(length: &u16) -> bool {
 pub fn choose(options: &[String]) -> Option<u8> {
     if options.len() > 16 || options.len() < 2 {
         if DEBUG {
-            println!("Length of options needs to be  1 < len < 17 but is {}", options.len());
+            println!(
+                "Length of options needs to be  1 < len < 17 but is {}",
+                options.len()
+            );
         }
         return None;
     }
@@ -106,9 +118,15 @@ pub fn choose(options: &[String]) -> Option<u8> {
                 if it.code == KeyCode::Up {
                     if selected > 0 {
                         selected -= 1;
-                        if execute!(stdout(), MoveToPreviousLine((options.len()) as u16), MoveToColumn(1)).is_err()
+                        if execute!(
+                            stdout(),
+                            MoveToPreviousLine((options.len()) as u16),
+                            MoveToColumn(1)
+                        )
+                        .is_err()
                             || !clear(&(options.len() as u16))
-                            || !prt(options, &mut selected) {
+                            || !prt(options, &mut selected)
+                        {
                             if DEBUG {
                                 println!("err/choose/match-key-1");
                             }
@@ -118,9 +136,15 @@ pub fn choose(options: &[String]) -> Option<u8> {
                 } else if it.code == KeyCode::Down {
                     if selected < (options.len() - 1) as u8 {
                         selected += 1;
-                        if execute!(stdout(), MoveToPreviousLine((options.len()) as u16), MoveToColumn(1)).is_err()
+                        if execute!(
+                            stdout(),
+                            MoveToPreviousLine((options.len()) as u16),
+                            MoveToColumn(1)
+                        )
+                        .is_err()
                             || !clear(&(options.len() as u16))
-                            || !prt(options, &mut selected) {
+                            || !prt(options, &mut selected)
+                        {
                             if DEBUG {
                                 println!("err/choose/match-key-2");
                             }
@@ -128,8 +152,14 @@ pub fn choose(options: &[String]) -> Option<u8> {
                         }
                     }
                 } else if it.code == KeyCode::Enter {
-                    if execute!(stdout(), MoveToPreviousLine(options.len() as u16), MoveToColumn(1)).is_err()
-                        || !clear(&(options.len() as u16)) {
+                    if execute!(
+                        stdout(),
+                        MoveToPreviousLine(options.len() as u16),
+                        MoveToColumn(1)
+                    )
+                    .is_err()
+                        || !clear(&(options.len() as u16))
+                    {
                         if DEBUG {
                             println!("err/choose/match-key-3");
                         }
