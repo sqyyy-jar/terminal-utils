@@ -48,3 +48,9 @@ You can cicle with the arrow keys and confirm with enter.
 It will return an error or the selected index off the selected
 option as i8.
 After selecting it will delete all written lines.
+Here the chooser will look as follows:
+ if the option is selected, it will be written like this ' > option < '
+ the arrows will be dark grey and the text will be black
+ the background will be white
+ if the option is not selected, it will be written like this '   option   '
+ the background and foreground color will be the default of the console
