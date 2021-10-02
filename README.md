@@ -56,4 +56,5 @@ Here the chooser will look as follows:
 - the background will be white  
 - if the option is not selected, it will be written like this '   option   '  
 - the background and foreground color will be the default of the console  
+
 You can find more information about styling [here](https://docs.rs/crossterm/0.14.0/crossterm/style/index.html) and in general [here](https://docs.rs/crossterm/0.14.0/crossterm/index.html).
