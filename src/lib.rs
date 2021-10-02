@@ -65,14 +65,14 @@ pub fn clear(length: &u16) -> Option<TerminalError> {
 #[allow(unused)]
 pub fn choose(
     options: &[String],
-    selected_prefix: &String,
-    selected_suffix: &String,
-    selected_color: Color,
-    prefix: &String,
-    suffix: &String,
-    color: Color,
+    selected_prefix: StyledContent<&str>,
+    selected_suffix: StyledContent<&str>,
+    selected_color: (Option<Color>, Option<Color>),
+    prefix: StyledContent<&str>,
+    suffix: StyledContent<&str>,
+    color: (Option<Color>, Option<Color>),
     infinite_cycle: bool,
-) -> Result<u8, TerminalError> {
+) -> Result<i8, TerminalError> {
     if options.len() > 16 || options.len() < 2 {
         return Err(TerminalError::new(
             TerminalErrKind::ArrayTooLongErr,
@@ -97,36 +97,43 @@ pub fn choose(
             "An console write error fired!".to_string(),
         ));
     }
-    let mut selected: u8 = 0;
+    let mut selected: i8 = 0;
     fn prt(
         options: &[String],
-        selected: &mut u8,
-        selected_prefix: &String,
-        selected_suffix: &String,
-        selected_color: Color,
-        prefix: &String,
-        suffix: &String,
-        color: Color,
+        selected: &mut i8,
+        selected_prefix: StyledContent<&str>,
+        selected_suffix: StyledContent<&str>,
+        selected_color: (Option<Color>, Option<Color>),
+        prefix: StyledContent<&str>,
+        suffix: StyledContent<&str>,
+        color: (Option<Color>, Option<Color>),
     ) -> Option<ErrorKind> {
         let mut i = 0;
         for option in options {
             if *selected == i {
+                let mut message = format!("{}", option).stylize();
+                if selected_color.0.is_some() { message = message.with(selected_color.0.unwrap().clone()) }
+                if selected_color.1.is_some() { message = message.on(selected_color.1.unwrap().clone()) }
                 let result_pr0 = execute!(
                     stdout(),
-                    PrintStyledContent(
-                        format!("{}{}{}\n\r", selected_prefix, option, selected_suffix)
-                            .on(selected_color.clone())
-                    )
+                    PrintStyledContent(selected_prefix.clone()),
+                    PrintStyledContent(message),
+                    PrintStyledContent(selected_suffix.clone()),
+                    Print("\n\r")
                 );
                 if result_pr0.is_err() {
                     return Some(result_pr0.unwrap_err());
                 }
             } else {
+                let mut message = format!("{}", option).stylize();
+                if color.0.is_some() { message = message.with(color.0.unwrap().clone()) }
+                if color.1.is_some() { message = message.on(color.1.unwrap().clone()) }
                 let result_pr1 = execute!(
                     stdout(),
-                    PrintStyledContent(
-                        format!("{}{}{}\n\r", prefix, option, suffix).on(color.clone())
-                    )
+                    PrintStyledContent(prefix.clone()),
+                    PrintStyledContent(message),
+                    PrintStyledContent(suffix.clone()),
+                    Print("\n\r")
                 );
                 if result_pr1.is_err() {
                     return Some(result_pr1.unwrap_err());
@@ -167,7 +174,7 @@ pub fn choose(
                     if infinite_cycle {
                         selected -= 1;
                         if selected < 0 {
-                            selected = (options.len() - 1) as u8;
+                            selected = (options.len() - 1) as i8;
                         }
                     } else {
                         if selected > 0 {
@@ -208,11 +215,11 @@ pub fn choose(
                 } else if it.code == KeyCode::Down {
                     if infinite_cycle {
                         selected += 1;
-                        if selected >= options.len() as u8 {
+                        if selected >= options.len() as i8 {
                             selected = 0;
                         }
                     } else {
-                        if selected < (options.len() - 1) as u8 {
+                        if selected < (options.len() - 1) as i8 {
                             selected += 1;
                         }
                     }
