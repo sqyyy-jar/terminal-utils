@@ -39,11 +39,13 @@ if result.is_ok() {
   println!("{}", result.unwrap_err().err_msg);
 }
 ```
+![alt text](https://github.com/sqyyy-jar/terminal-utils/blob/master/images/look.png "Preview")  
 This will let you choose in the console one of 'A', 'B' and 'C'.  
 The maximum amount of options is 16 and the minimal is 2 but it
 is changeable in the code.  
 You have an infinite cycle, which means if you go above the first option 
 you land back again at the bottom and the other way around.  
+![alt text](https://github.com/sqyyy-jar/terminal-utils/blob/master/images/infinite_cycle.gif "Infinite cycle")  
 You can cicle with the arrow keys and confirm with enter.  
 It will return an error or the selected index off the selected
 option as i8.  
