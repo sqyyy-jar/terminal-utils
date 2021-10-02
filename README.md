@@ -39,11 +39,13 @@ if result.is_ok() {
   println!("{}", result.unwrap_err().err_msg);
 }
 ```
+![alt text](https://github.com/sqyyy-jar/terminal-utils/blob/master/images/look.png "Preview")  
 This will let you choose in the console one of 'A', 'B' and 'C'.  
 The maximum amount of options is 16 and the minimal is 2 but it
 is changeable in the code.  
 You have an infinite cycle, which means if you go above the first option 
 you land back again at the bottom and the other way around.  
+![alt text](https://github.com/sqyyy-jar/terminal-utils/blob/master/images/infinite_cycle.gif "Infinite cycle")  
 You can cicle with the arrow keys and confirm with enter.  
 It will return an error or the selected index off the selected
 option as i8.  
@@ -54,3 +56,5 @@ Here the chooser will look as follows:
 - the background will be white  
 - if the option is not selected, it will be written like this '   option   '  
 - the background and foreground color will be the default of the console  
+
+You can find more information about styling [here](https://docs.rs/crossterm/0.14.0/crossterm/style/index.html) and in general [here](https://docs.rs/crossterm/0.14.0/crossterm/index.html).
