@@ -94,19 +94,19 @@ pub fn choose(
                 .to_string(),
         ));
     }
+    fn console_write_err(err: ErrorKind) -> Result<i8, TerminalError> {
+        Err(TerminalError::new(
+            TerminalErrKind::ConsoleWriteErr(err),
+            "An console write error fired!".to_string(),
+        ))
+    }
     let result_ch0 = execute!(stdout(), Hide);
     if result_ch0.is_err() {
-        return Err(TerminalError::new(
-            TerminalErrKind::ConsoleWriteErr(result_ch0.unwrap_err()),
-            "An console write error fired!".to_string(),
-        ));
+        return console_write_err(result_ch0.unwrap_err());
     }
     let result_ch1 = enable_raw_mode();
     if result_ch1.is_err() {
-        return Err(TerminalError::new(
-            TerminalErrKind::ConsoleWriteErr(result_ch1.unwrap_err()),
-            "An console write error fired!".to_string(),
-        ));
+        return console_write_err(result_ch1.unwrap_err());
     }
     let mut selected: i8 = 0;
     fn prt(
@@ -165,18 +165,12 @@ pub fn choose(
         color.clone(),
     );
     if result_ch2.is_some() {
-        return Err(TerminalError::new(
-            TerminalErrKind::ConsoleWriteErr(result_ch2.unwrap()),
-            "An console write error fired!".to_string(),
-        ));
+        return console_write_err(result_ch2.unwrap());
     }
     loop {
         let result_ch3 = read();
         if result_ch3.is_err() {
-            return Err(TerminalError::new(
-                TerminalErrKind::ConsoleWriteErr(result_ch3.unwrap_err()),
-                "An console write error fired!".to_string(),
-            ));
+            return console_write_err(result_ch3.unwrap_err());
         }
         let key = result_ch3.unwrap();
         match key {
@@ -198,10 +192,7 @@ pub fn choose(
                         MoveToColumn(1)
                     );
                     if result_ch4.is_err() {
-                        return Err(TerminalError::new(
-                            TerminalErrKind::ConsoleWriteErr(result_ch4.unwrap_err()),
-                            "An console write error fired!".to_string(),
-                        ));
+                        return console_write_err(result_ch4.unwrap_err());
                     }
                     let result_ch5 = clear(&(options.len() as u16));
                     if result_ch5.is_some() {
@@ -218,10 +209,7 @@ pub fn choose(
                         color.clone(),
                     );
                     if result_ch6.is_some() {
-                        return Err(TerminalError::new(
-                            TerminalErrKind::ConsoleWriteErr(result_ch6.unwrap()),
-                            "An console write error fired!".to_string(),
-                        ));
+                        return console_write_err(result_ch6.unwrap());
                     }
                 } else if it.code == KeyCode::Down {
                     if infinite_cycle {
@@ -240,10 +228,7 @@ pub fn choose(
                         MoveToColumn(1)
                     );
                     if result_ch4.is_err() {
-                        return Err(TerminalError::new(
-                            TerminalErrKind::ConsoleWriteErr(result_ch4.unwrap_err()),
-                            "An console write error fired!".to_string(),
-                        ));
+                        return console_write_err(result_ch4.unwrap_err());
                     }
                     let result_ch5 = clear(&(options.len() as u16));
                     if result_ch5.is_some() {
@@ -260,10 +245,7 @@ pub fn choose(
                         color.clone(),
                     );
                     if result_ch6.is_some() {
-                        return Err(TerminalError::new(
-                            TerminalErrKind::ConsoleWriteErr(result_ch6.unwrap()),
-                            "An console write error fired!".to_string(),
-                        ));
+                        return console_write_err(result_ch6.unwrap());
                     }
                 } else if it.code == KeyCode::Enter {
                     let result_ch4 = execute!(
@@ -273,10 +255,7 @@ pub fn choose(
                         Show
                     );
                     if result_ch4.is_err() {
-                        return Err(TerminalError::new(
-                            TerminalErrKind::ConsoleWriteErr(result_ch4.unwrap_err()),
-                            "An console write error fired!".to_string(),
-                        ));
+                        return console_write_err(result_ch4.unwrap_err());
                     }
                     let result_ch5 = clear(&(options.len() as u16));
                     if result_ch5.is_some() {
@@ -284,10 +263,7 @@ pub fn choose(
                     }
                     let result_ch6 = disable_raw_mode();
                     if result_ch6.is_err() {
-                        return Err(TerminalError::new(
-                            TerminalErrKind::ConsoleWriteErr(result_ch6.unwrap_err()),
-                            "An console write error fired!".to_string(),
-                        ));
+                        return console_write_err(result_ch6.unwrap_err());
                     }
                     return Ok(selected);
                 }
