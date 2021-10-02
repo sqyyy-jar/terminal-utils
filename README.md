@@ -1,5 +1,5 @@
 # terminal-utils
-A simple library for creating CLIs using [crossterm-rs](https://github.com/crossterm-rs/crossterm).
+A small library for creating CLIs using [crossterm-rs](https://github.com/crossterm-rs/crossterm).
 
 ## TODO
 - Add yes/no decision function.
