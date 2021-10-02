@@ -60,8 +60,19 @@ pub fn clear(length: &u16) -> Option<TerminalError> {
 }
 
 /// choose a string out of an array
-/// maximum length: 16
-/// minimum length: 2
+///
+/// Parameters:
+/// - options: &[String] - the options to choose one from
+/// - selected_prefix: StyledContent<&str> - the prefix displayed in front of the selected option
+/// - selected_suffix: StyledContent<&str> - the suffix displayed behind the selected option
+/// - selected_color: (Option<Color>, Option<Color>) - the front- (0) and background- (1) color
+///                                                    (Default if None)
+/// - prefix: StyledContent<&str> - the prefix displayed in front of the not selected option(s)
+/// - suffix: StyledContent<&str> - the suffix displayed behind the not selected option(s)
+/// - color: (Option<Color>, Option<Color>) - the front- (0) and background- (1) color
+///                                                    (Default if None)
+/// - infinite_cycle: bool - whether to use an infinite loop or not
+/// (first element selected -> push arrow-key up -> last element selected - and the other way around)
 #[allow(unused)]
 pub fn choose(
     options: &[String],
@@ -80,7 +91,7 @@ pub fn choose(
                 "Length of options needs to be  1 < len < 17 but is {}!",
                 options.len()
             )
-            .to_string(),
+                .to_string(),
         ));
     }
     let result_ch0 = execute!(stdout(), Hide);
