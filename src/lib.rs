@@ -272,3 +272,35 @@ pub fn choose(
         }
     }
 }
+
+pub fn bool_choose(
+    yes: Option<char>,
+    no: Option<char>
+) -> Result<bool, TerminalError> {
+    let yes = if yes.is_some() { yes.unwrap() } else { 'y' };
+    let no = if no.is_some() { no.unwrap() } else { 'n' };
+    fn console_write_err(err: ErrorKind) -> Result<bool, TerminalError> {
+        Err(TerminalError::new(
+            TerminalErrKind::ConsoleWriteErr(err),
+            "An console write error fired!".to_string(),
+        ))
+    }
+    loop {
+        let result_bc0 = read();
+        if result_bc0.is_err() {
+            return console_write_err(result_bc0.unwrap_err());
+        }
+        let key = result_bc0.unwrap();
+        match key {
+            Event::Key(it) => {
+                if it.code == KeyCode::Char(yes) {
+                    return Ok(true);
+                } else if it.code == KeyCode::Char(no) {
+                    return Ok(false);
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
